@@ -33,7 +33,7 @@ export default function AllPartsConsidered() {
             href="https://problemlibrary.org/event/all-parts-considered/"
             target="_blank"
             rel="noopener noreferrer"
-            className="underline underline-offset-4"
+            className="dot-underline"
           >
             All Parts Considered
           </a>

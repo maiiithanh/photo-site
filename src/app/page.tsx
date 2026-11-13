@@ -1,10 +1,17 @@
 import type { CSSProperties } from "react";
+import MaiBranch from "@/components/MaiBranch";
 
 // The composition is free-form, so pieces are placed absolutely, measured
 // from the mockup relative to the grid columns. Horizontal positions are a
 // column number plus a fraction of that column's width, so the layout keeps
 // its shape as the columns resize. Vertical positions are the centre of
-// each piece, in px from the top of the page.
+// each piece, in px from the top of the page, as measured on a 940px-tall
+// page.
+//
+// The page is exactly as tall as the browser window, so it never scrolls.
+// In a window shorter than 940px, every piece moves up in proportion to fit;
+// in a taller one, pieces keep their measured positions.
+const DESIGN_HEIGHT = 940;
 
 // Width of one grid column; 100% is this page's area (columns 3–6)
 const COL = "((100% - 60px) / 4)";
@@ -81,10 +88,11 @@ function Ascii({ lines }: { lines: string[] }) {
 
 export default function Home() {
   return (
-    <div className="relative col-span-4 h-[940px]">
+    // Clipped vertically so falling petals can never make the page scroll
+    <div className="relative col-span-4 h-svh overflow-y-clip">
       {pieces.map((piece, i) => {
         const style: CSSProperties = {
-          top: piece.y,
+          top: `min(${piece.y}px, ${(piece.y / DESIGN_HEIGHT) * 100}svh)`,
           left: piece.left,
           right: piece.right,
         };
@@ -98,6 +106,14 @@ export default function Home() {
           </div>
         );
       })}
+      {/* The mai branch sits at the bottom left of the window, its left
+          edge on the nav's (column 1, moved 20px left with the nav) */}
+      <div
+        className="absolute bottom-0"
+        style={{ left: `calc(-2 * (${COL} + 20px) - 20px)` }}
+      >
+        <MaiBranch />
+      </div>
     </div>
   );
 }

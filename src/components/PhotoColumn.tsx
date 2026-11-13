@@ -10,14 +10,25 @@ type Props = {
   // Put consecutive vertical photos side by side in pairs, like a gallery:
   // two equal tiles a gutter apart, cropped to 4:5
   pairPortraits?: boolean;
-  // Span columns 3–6 instead of 4–6: horizontal photos fill the full width,
-  // single vertical photos are centred at three columns wide, and pairs
-  // reach one column further left (columns 2–6)
+  // Span columns 3–6 instead of 4–6. Pairs are 90% as wide as columns 2–6
+  // and end at the right margin; every other photo is centred on the pairs:
+  // horizontal photos at four columns wide, single vertical photos at three
   centered?: boolean;
 };
 
 // Three columns wide, centred, inside the four-column area
 const THREE_OF_FOUR = "mx-auto w-[calc((100%-60px)*3/4+40px)]";
+
+// Width of a centred pair: 90% of columns 2–6 (this area plus one column
+// and a gutter)
+const PAIR_WIDTH = "0.9 * (100% + (100% - 60px) / 4 + 20px)";
+
+// Moves a photo centred in this area left, so its centre lines up with the
+// centre of the pairs
+const ON_PAIR_AXIS = {
+  position: "relative",
+  right: `calc(${PAIR_WIDTH} / 2 - 50%)`,
+} as const;
 
 function isPortrait(photo: Photo) {
   return photo.height > photo.width;
@@ -94,7 +105,7 @@ export default function PhotoColumn({
             // portrait photos sit narrower than landscape ones. When centred,
             // horizontal photos fill all four columns instead.
             centered && !isPortrait(row[0]) ? (
-              <figure key={row[0].key}>
+              <figure key={row[0].key} style={ON_PAIR_AXIS}>
                 <Image
                   src={mediaUrl(row[0].key)}
                   alt={row[0].alt ?? row[0].caption?.[0] ?? ""}
@@ -110,6 +121,7 @@ export default function PhotoColumn({
               <figure
                 key={row[0].key}
                 className={`@container flex flex-col ${centered ? `items-center ${THREE_OF_FOUR}` : "items-end"}`}
+                style={centered ? ON_PAIR_AXIS : undefined}
               >
                 <Image
                   src={mediaUrl(row[0].key)}
@@ -126,11 +138,21 @@ export default function PhotoColumn({
           ) : (
             // A pair is two equal tiles, a 20px gutter apart, each photo
             // cropped to 4:5 from its centre. When centred, the row reaches
-            // one column (plus a gutter) left of this area, so it is wider
-            // than the horizontal photos but keeps the same right edge.
+            // left past this area, so it is wider than the horizontal photos
+            // but keeps the same right edge.
             <div
               key={row.map((photo) => photo.key).join()}
-              className={`grid grid-cols-2 gap-x-5 ${centered ? "-ml-[calc((100%-60px)/4+20px)]" : ""}`}
+              className="grid grid-cols-2 gap-x-5"
+              style={
+                centered
+                  ? {
+                      width: `calc(${PAIR_WIDTH})`,
+                      // Wider than this area, so set the overhang explicitly
+                      // to keep the right edge on the margin
+                      marginLeft: `calc(100% - ${PAIR_WIDTH})`,
+                    }
+                  : undefined
+              }
             >
               {row.map((photo) => (
                 <figure key={photo.key}>

@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-serif: var(--font-eb-garamond);
+  --font-serif: var(--font-crimson-text);
   --font-dot: var(--font-doto);
 
   /* Main and secondary text differ only in size */
@@ -27,4 +27,71 @@
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Underline drawn as a row of Doto "." characters instead of a line,
+   clipped to the width of the text */
+@utility dot-underline {
+  position: relative;
+
+  &::after {
+    content: "............................................................................................................................................................................................................................................................................................................";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0.55em;
+    overflow: hidden;
+    font-family: var(--font-doto);
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+}
+
+/* Motion for the mai branch on the home page */
+@keyframes mai-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mai-twinkle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes mai-fall {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50px, 200px);
+  }
+}
+
+/* With reduced motion the branch is shown fully bloomed and still */
+@media (prefers-reduced-motion: reduce) {
+  .mai-motion * {
+    animation: none !important;
+  }
+  .mai-petal {
+    display: none;
+  }
 }

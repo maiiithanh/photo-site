@@ -11,8 +11,9 @@ export default function Info() {
     <div className="col-span-4 pt-[140px]">
       <p>
         I am a photographer and experimental new media artist based in San
-        Francisco, California. My work is a provocation You can reach me by
-        email.
+        Francisco, California. I am inspired by the varying schools of
+        consciousness, memory, collective languages of persistence, and our
+        relationship to technology. You can reach me by email.
       </p>
       {/* One blank line (one line-height) between paragraphs */}
       <p className="mt-[1.4em]">

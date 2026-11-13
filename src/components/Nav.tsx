@@ -16,8 +16,10 @@ export default function Nav() {
 
   return (
     // Sticky, so it stays in place while the page scrolls; self-start keeps
-    // it from stretching to the full grid height, which would stop it sticking
-    <nav className="sticky top-0 col-span-2 self-start pt-[140px]">
+    // it from stretching to the full grid height, which would stop it sticking.
+    // Sits 20px up and 20px left of the grid (120px from the top, 95px from
+    // the left edge).
+    <nav className="sticky top-0 col-span-2 -ml-5 self-start pt-[120px]">
       <Link href="/" className="block">
         Mai-Thanh Nguyen
       </Link>
@@ -29,7 +31,7 @@ export default function Nav() {
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={active ? "underline underline-offset-4" : undefined}
+                className={active ? "dot-underline" : undefined}
               >
                 {label}
               </Link>
