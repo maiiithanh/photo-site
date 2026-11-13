@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-serif: var(--font-eb-garamond);
+  --font-dot: var(--font-doto);
+
+  /* Main and secondary text differ only in size */
+  --text-main: 16.8px;
+  --text-main--line-height: 1.4;
+  --text-main--letter-spacing: 1px;
+  --text-secondary: 14px;
+  --text-secondary--line-height: 1.4;
+  --text-secondary--letter-spacing: 1px;
+  /* Photo captions on the Ongoing Works page */
+  --text-caption: 12px;
+  --text-caption--line-height: 1.4;
+  --text-caption--letter-spacing: 1px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
