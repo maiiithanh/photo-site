@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,10 +14,13 @@ const header = [
 export default function AllPartsConsidered() {
   return (
     // Columns 3–6. The header's last line lines up with the name in the nav
-    // (140px from the top, minus the lines above it).
+    // (140px from the top, minus the lines above it). On phones the nav is
+    // above the page, so spacing is simply tighter.
     <div
-      className="col-span-4 pb-[140px]"
-      style={{ paddingTop: `calc(140px - ${header.length - 1} * 1.4em)` }}
+      className="col-span-4 pb-[140px] md:pt-(--header-top) max-md:pt-10 max-md:pb-16"
+      style={
+        { "--header-top": `calc(140px - ${header.length - 1} * 1.4em)` } as CSSProperties
+      }
     >
       <div className="text-right">
         {header.map((line) => (
@@ -26,7 +30,7 @@ export default function AllPartsConsidered() {
 
       {/* The first line lines up with the second nav link: the 80px gap
           below the name, plus one nav line */}
-      <div className="mt-[calc(80px+1.4em)] text-justify">
+      <div className="mt-[calc(80px+1.4em)] text-justify max-md:mt-10">
         <p>
           I participated in{" "}
           <a
@@ -51,8 +55,8 @@ export default function AllPartsConsidered() {
         </p>
       </div>
 
-      {/* Columns 5–6, right-aligned */}
-      <figure className="mt-[150px] ml-auto w-[calc((100%-20px)/2)]">
+      {/* Columns 5–6, right-aligned; full width on phones */}
+      <figure className="mt-[150px] ml-auto w-[calc((100%-20px)/2)] max-md:mt-16 max-md:w-full">
         {/* Placeholder until AllPartsConsidered.jpg is uploaded to S3 */}
         <div className="aspect-[256/355] w-full bg-neutral-200" />
         <figcaption className="mt-4 text-right text-secondary">

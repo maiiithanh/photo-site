@@ -86,54 +86,54 @@ export const ongoingWorks: Photo[] = [
   },
 ];
 
-// Commissioned: Arcana, in reverse file-name order (13 first), no captions
+// Commissioned: Arcana, 06 first, then reverse file-name order (13 first), no captions
 export const commissioned: Photo[] = [
+  {
+    key: "Arcana/arcana-06.jpg",
+    width: 3000,
+    height: 1779,
+    alt: "Arcana, photo 1 of 13",
+  },
   {
     key: "Arcana/arcana-13.jpg",
     width: 3000,
     height: 2221,
-    alt: "Arcana, photo 1 of 13",
+    alt: "Arcana, photo 2 of 13",
   },
   {
     key: "Arcana/arcana-12.jpg",
     width: 3000,
     height: 2000,
-    alt: "Arcana, photo 2 of 13",
+    alt: "Arcana, photo 3 of 13",
   },
   {
     key: "Arcana/arcana-11.jpg",
     width: 3000,
     height: 2000,
-    alt: "Arcana, photo 3 of 13",
+    alt: "Arcana, photo 4 of 13",
   },
   {
     key: "Arcana/arcana-10.jpg",
     width: 2006,
     height: 3000,
-    alt: "Arcana, photo 4 of 13",
+    alt: "Arcana, photo 5 of 13",
   },
   {
     key: "Arcana/arcana-09.jpg",
     width: 2000,
     height: 3000,
-    alt: "Arcana, photo 5 of 13",
+    alt: "Arcana, photo 6 of 13",
   },
   {
     key: "Arcana/arcana-08.jpg",
     width: 2464,
     height: 3000,
-    alt: "Arcana, photo 6 of 13",
+    alt: "Arcana, photo 7 of 13",
   },
   {
     key: "Arcana/arcana-07.jpg",
     width: 2000,
     height: 3000,
-    alt: "Arcana, photo 7 of 13",
-  },
-  {
-    key: "Arcana/arcana-06.jpg",
-    width: 3000,
-    height: 1779,
     alt: "Arcana, photo 8 of 13",
   },
   {

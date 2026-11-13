@@ -1,119 +1,73 @@
 import type { CSSProperties } from "react";
-import MaiBranch from "@/components/MaiBranch";
+import Ascii from "@/components/Ascii";
+import Spiral from "@/components/Spiral";
+import { leftAt, rightAt, topAt } from "@/lib/grid";
 
-// The composition is free-form, so pieces are placed absolutely, measured
-// from the mockup relative to the grid columns. Horizontal positions are a
-// column number plus a fraction of that column's width, so the layout keeps
-// its shape as the columns resize. Vertical positions are the centre of
-// each piece, in px from the top of the page, as measured on a 940px-tall
-// page.
-//
-// The page is exactly as tall as the browser window, so it never scrolls.
-// In a window shorter than 940px, every piece moves up in proportion to fit;
-// in a taller one, pieces keep their measured positions.
-const DESIGN_HEIGHT = 940;
-
-// Width of one grid column; 100% is this page's area (columns 3–6)
-const COL = "((100% - 60px) / 4)";
-
-// The whole composition is moved right from the mockup so the rightmost
-// ASCII line ends at the right margin, like the other pages. That line sits
-// 5% into column 6 in the mockup; the extra px is the space between the edge
-// of its last character cell and the ink of the final dot.
-const SHIFT = `(0.95 * ${COL} + 5px)`;
-
-// Left edge at `frac` of the way across column `col`
-function leftAt(col: number, frac: number) {
-  return `calc(${col - 3} * (${COL} + 20px) + ${frac} * ${COL} + ${SHIFT})`;
-}
-
-// Right edge at `frac` of the way across column `col`
-function rightAt(col: number, frac: number) {
-  return `calc(100% - ${col - 3} * (${COL} + 20px) - ${frac} * ${COL} - ${SHIFT})`;
-}
-
-type Piece = {
+type Star = {
+  line: string;
   y: number;
   left?: string;
   right?: string;
-} & ({ text: string } | { ascii: string[] });
+  // Classes placing it on phones, in the open space above the spiral
+  phone: string;
+};
 
-const eye = [
-  "    .  *  .",
-  " .-'       '-.",
-  "(     (●)     )",
-  " '-.       .-'",
-  "    '  *  '",
+// The stars keep their places from the original composition (see grid)
+const stars: Star[] = [
+  {
+    line: ".｡.:* :**",
+    left: leftAt(3, 0.05),
+    y: 140,
+    phone: "max-md:top-[4%] max-md:left-0",
+  },
+  {
+    line: "**::*:.｡.",
+    right: rightAt(6, 0.05),
+    y: 221,
+    phone: "max-md:top-[12%] max-md:right-0",
+  },
+  {
+    line: ":**",
+    left: leftAt(3, 0.705),
+    y: 880,
+    phone: "max-md:top-[24%] max-md:left-0",
+  },
 ];
-
-const pieces: Piece[] = [
-  { ascii: [".｡.:* :**"], left: leftAt(3, 0.05), y: 140 },
-  { ascii: ["**::*:.｡."], right: rightAt(6, 0.05), y: 221 },
-  { text: "It’s all a question of imagination", left: leftAt(3, 0.848), y: 264 },
-  { text: "our responsibility begins with", right: rightAt(5, 0.582), y: 332 },
-  { ascii: eye, left: leftAt(3, 0.046), y: 552 },
-  { text: "the power to imagine", right: rightAt(5, 0.582), y: 535 },
-  { text: "In dreams", left: leftAt(2, 0.599), y: 750 },
-  { text: "begin responsibilities", left: leftAt(4, 0.485), y: 750 },
-  { ascii: [":**"], left: leftAt(3, 0.705), y: 880 },
-];
-
-// Drawn in Doto Regular, line height 130%, at 4/3 of the main text size (32px
-// against 24px text in the mockup). Doto is monospaced at 0.6em per
-// character; ｡ and ● aren't in Doto and fall back to another font, so every
-// character gets a 0.6em cell to keep the drawing's shape. ● is drawn 1.24×
-// larger to match the mockup.
-function Ascii({ lines }: { lines: string[] }) {
-  return (
-    <div
-      aria-hidden
-      className="font-dot text-[calc(4em/3)] leading-[1.3] font-normal tracking-normal"
-    >
-      {lines.map((line, i) => (
-        <div key={i} className="flex">
-          {Array.from(line).map((char, j) => (
-            <span key={j} className="inline-block w-[0.6em] text-center">
-              {char === "●" ? (
-                <span className="inline-block scale-[1.24]">{char}</span>
-              ) : (
-                char
-              )}
-            </span>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function Home() {
   return (
-    // Clipped vertically so falling petals can never make the page scroll
-    <div className="relative col-span-4 h-svh overflow-y-clip">
-      {pieces.map((piece, i) => {
-        const style: CSSProperties = {
-          top: `min(${piece.y}px, ${(piece.y / DESIGN_HEIGHT) * 100}svh)`,
-          left: piece.left,
-          right: piece.right,
-        };
-        return (
-          <div
-            key={i}
-            style={style}
-            className="absolute -translate-y-1/2 whitespace-nowrap"
-          >
-            {"text" in piece ? <p>{piece.text}</p> : <Ascii lines={piece.ascii} />}
-          </div>
-        );
-      })}
-      {/* The mai branch sits at the bottom left of the window, its left
-          edge on the nav's (column 1, moved 20px left with the nav) */}
-      <div
-        className="absolute bottom-0"
-        style={{ left: `calc(-2 * (${COL} + 20px) - 20px)` }}
-      >
-        <MaiBranch />
+    // The page is exactly as tall as the browser window, so it never
+    // scrolls. The spiral's text is always the nav's size; both shrink
+    // together in windows too small for it at full size (see Spiral).
+    // On phones (below 768px) it fills the space below the nav, drawn with a
+    // trail that turns upward sooner so it stays narrow.
+    //
+    // On desktop the spiral sits in the bottom right corner and the tail of
+    // loose letters drifts left across the page, ending in column 2 (below
+    // the nav), so the drawing area reaches one column and gutter left of
+    // columns 3–6.
+    <div className="relative col-span-4 h-svh max-md:h-auto max-md:min-h-[60svh] max-md:flex-1">
+      <div className="absolute inset-x-0 top-[80px] bottom-[50px] md:left-[calc(-1*((100%-60px)/4+20px))] max-md:top-6 max-md:bottom-6">
+        <Spiral className="max-md:hidden" />
+        <Spiral phone className="md:hidden" />
       </div>
+      {/* Desktop positions are passed as variables and applied only from
+          768px up */}
+      {stars.map(({ line, y, left, right, phone }) => (
+        <div
+          key={line}
+          style={
+            {
+              "--top": topAt(y),
+              "--left": left,
+              "--right": right,
+            } as CSSProperties
+          }
+          className={`absolute md:top-(--top) md:right-(--right) md:left-(--left) md:-translate-y-1/2 ${phone}`}
+        >
+          <Ascii lines={[line]} />
+        </div>
+      ))}
     </div>
   );
 }

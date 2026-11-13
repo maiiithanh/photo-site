@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { mediaUrl, type Photo } from "@/lib/media";
 
@@ -16,19 +17,21 @@ type Props = {
   centered?: boolean;
 };
 
-// Three columns wide, centred, inside the four-column area
-const THREE_OF_FOUR = "mx-auto w-[calc((100%-60px)*3/4+40px)]";
+// Three columns wide, centred, inside the four-column area (full width on
+// phones)
+const THREE_OF_FOUR = "mx-auto w-[calc((100%-60px)*3/4+40px)] max-md:w-full";
 
 // Width of a centred pair: 90% of columns 2–6 (this area plus one column
 // and a gutter)
 const PAIR_WIDTH = "0.9 * (100% + (100% - 60px) / 4 + 20px)";
 
 // Moves a photo centred in this area left, so its centre lines up with the
-// centre of the pairs
-const ON_PAIR_AXIS = {
-  position: "relative",
-  right: `calc(${PAIR_WIDTH} / 2 - 50%)`,
-} as const;
+// centre of the pairs. Desktop only: on phones every photo is full width.
+const ON_PAIR_AXIS = "md:relative md:right-(--pair-axis)";
+
+// Space between two rows of pairs: the same as the gutter between the two
+// photos in a pair
+const PAIR_ROW_GAP = "mt-5";
 
 function isPortrait(photo: Photo) {
   return photo.height > photo.width;
@@ -75,6 +78,14 @@ export default function PhotoColumn({
 }: Props) {
   const rows = toRows(photos, pairPortraits);
 
+  // Space above each row after the first. On phones it's half the desktop
+  // gap, except between rows of pairs, which stay a gutter apart.
+  function rowGap(i: number) {
+    if (i === 0) return "";
+    if (rows[i].length === 2 && rows[i - 1].length === 2) return PAIR_ROW_GAP;
+    return "mt-(--gap) max-md:mt-[calc(var(--gap)/2)]";
+  }
+
   return (
     // Columns 4–6 (or 3–6 when centred), so photos end at the right margin
     // (main starts at column 3).
@@ -84,20 +95,26 @@ export default function PhotoColumn({
     // Without one, the first photo's top edge lines up with the tops of the
     // letters in the first nav link: 140px top padding + name line (1.4em) +
     // 80px gap, then 0.385em down from the top of that line to the capitals.
+    // On phones the nav is above the page, so there's nothing to line up with.
     <div
-      className={`pb-[140px] ${centered ? "col-span-4" : "col-span-3 col-start-2"} ${intro ? "" : "pt-[calc(140px+1.4em+80px+0.385em)]"}`}
+      className={`pb-[140px] max-md:pt-10 max-md:pb-16 ${centered ? "col-span-4" : "col-span-3 col-start-2"} ${intro ? "md:pt-(--intro-top)" : "md:pt-[calc(140px+1.4em+80px+0.385em)]"}`}
       style={
-        intro && { paddingTop: `calc(140px - ${intro.length - 1} * 1.4em)` }
+        {
+          "--gap": `${gap}px`,
+          "--intro-top": intro && `calc(140px - ${intro.length - 1} * 1.4em)`,
+          "--pair-axis": `calc(${PAIR_WIDTH} / 2 - 50%)`,
+          "--pair-width": `calc(${PAIR_WIDTH})`,
+        } as CSSProperties
       }
     >
       {intro && (
-        <div className="mb-[96px] text-right">
+        <div className="mb-[96px] text-right max-md:mb-10">
           {intro.map((line) => (
             <p key={line}>{line}</p>
           ))}
         </div>
       )}
-      <div className="flex flex-col" style={{ rowGap: gap }}>
+      <div className="flex flex-col">
         {rows.map((row, i) =>
           row.length === 1 ? (
             // Each photo is scaled down, never cropped, to fit three columns.
@@ -105,7 +122,7 @@ export default function PhotoColumn({
             // portrait photos sit narrower than landscape ones. When centred,
             // horizontal photos fill all four columns instead.
             centered && !isPortrait(row[0]) ? (
-              <figure key={row[0].key} style={ON_PAIR_AXIS}>
+              <figure key={row[0].key} className={`${ON_PAIR_AXIS} ${rowGap(i)}`}>
                 <Image
                   src={mediaUrl(row[0].key)}
                   alt={row[0].alt ?? row[0].caption?.[0] ?? ""}
@@ -120,8 +137,7 @@ export default function PhotoColumn({
             ) : (
               <figure
                 key={row[0].key}
-                className={`@container flex flex-col ${centered ? `items-center ${THREE_OF_FOUR}` : "items-end"}`}
-                style={centered ? ON_PAIR_AXIS : undefined}
+                className={`@container flex flex-col ${centered ? `items-center ${THREE_OF_FOUR} ${ON_PAIR_AXIS}` : "items-end"} ${rowGap(i)}`}
               >
                 <Image
                   src={mediaUrl(row[0].key)}
@@ -139,20 +155,13 @@ export default function PhotoColumn({
             // A pair is two equal tiles, a 20px gutter apart, each photo
             // cropped to 4:5 from its centre. When centred, the row reaches
             // left past this area, so it is wider than the horizontal photos
-            // but keeps the same right edge.
+            // but keeps the same right edge (on desktop; phones have no
+            // room to reach past, so pairs are full width there).
+            // Wider than this area, so the overhang is set explicitly to keep
+            // the right edge on the margin.
             <div
               key={row.map((photo) => photo.key).join()}
-              className="grid grid-cols-2 gap-x-5"
-              style={
-                centered
-                  ? {
-                      width: `calc(${PAIR_WIDTH})`,
-                      // Wider than this area, so set the overhang explicitly
-                      // to keep the right edge on the margin
-                      marginLeft: `calc(100% - ${PAIR_WIDTH})`,
-                    }
-                  : undefined
-              }
+              className={`grid grid-cols-2 gap-x-5 ${centered ? "md:ml-[calc(100%-var(--pair-width))] md:w-(--pair-width)" : ""} ${rowGap(i)}`}
             >
               {row.map((photo) => (
                 <figure key={photo.key}>

@@ -9,8 +9,8 @@ export default function Films() {
   return (
     // Same layout as Ongoing Works: columns 4–6, ending at the right margin,
     // with the first film's top edge level with the tops of the letters in
-    // the first nav link (see PhotoColumn)
-    <div className="col-span-3 col-start-2 flex flex-col gap-y-[135px] pt-[calc(140px+1.4em+80px+0.385em)] pb-[140px]">
+    // the first nav link (see PhotoColumn). Closer together on phones.
+    <div className="col-span-3 col-start-2 flex flex-col gap-y-[135px] pt-[calc(140px+1.4em+80px+0.385em)] pb-[140px] max-md:gap-y-16 max-md:pt-10 max-md:pb-16">
       {films.map((film) => (
         <figure key={film.key}>
           {/* Both films are 1920×1080. Only the metadata loads until play. */}

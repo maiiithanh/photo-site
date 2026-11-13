@@ -89,9 +89,12 @@ function blossomStyle(row: number, col: number, n: number): CSSProperties {
 export default function MaiBranch() {
   let n = 0;
   return (
+    // 10px, shrinking with the window below 625px wide (1.6vw is 10px at
+    // 625px), so it fits under the text on phones. 0.75svh keeps it in the
+    // window on short phones too.
     <div
       aria-hidden
-      className="mai-motion relative font-dot text-[10px] leading-none font-normal tracking-normal whitespace-pre"
+      className="mai-motion relative font-dot text-[min(10px,1.6vw,0.75svh)] leading-none font-normal tracking-normal whitespace-pre"
     >
       {ART.map((line, row) => (
         <div key={row} className="flex h-[1em]">
