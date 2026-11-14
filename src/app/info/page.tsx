@@ -37,7 +37,15 @@ const pieces: Piece[] = [
     y: 70,
     phone: "max-md:self-end",
   },
-  { lines: eye, left: leftAt(3, 0.046), y: 552, phone: "max-md:self-center" },
+  // The eye sits 35% of this area further right than on the home page, to
+  // keep clear of the mai branch, and 10% of the page height higher (94px
+  // on the 940px-tall mockup)
+  {
+    lines: eye,
+    left: `calc(${leftAt(3, 0.046)} + 35%)`,
+    y: 552 - 94,
+    phone: "max-md:self-center",
+  },
   {
     lines: [":**"],
     left: leftAt(3, 0.705),
@@ -86,7 +94,7 @@ export default function Info() {
           on the nav's (column 1, moved 20px left with the nav: two columns
           and gutters left of this area, then 20px more). On phones it
           follows the text, at the bottom of the window. */}
-      <div className="max-md:mt-auto max-md:pt-10 md:absolute md:bottom-0 md:left-[calc(-2*((100%-60px)/4+20px)-20px)]">
+      <div className="max-md:mt-auto max-md:pt-10 md:absolute md:bottom-0 md:left-[calc(-2*((100%-60px)/4+20px)-20px)] md:-mb-[2.3em] md:-ml-[3.4em] md:text-[calc(var(--nav-text)*4/3)]">
         <MaiBranch />
       </div>
     </div>

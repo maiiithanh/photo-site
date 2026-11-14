@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { getImageProps } from "next/image";
+import SpiralTail from "@/components/SpiralTail";
 import { mediaUrl } from "@/lib/media";
 
 // The home page poem, set along a golden spiral (a logarithmic spiral that
@@ -202,22 +203,6 @@ function bounds(letters: Letter[]) {
   };
 }
 
-function Glyph({ char, x, y, rotate, dot }: Letter) {
-  return (
-    <text
-      x={x}
-      y={y}
-      transform={rotate ? `rotate(${rotate.toFixed(1)} ${x} ${y})` : undefined}
-      textAnchor="middle"
-      dominantBaseline="central"
-      className={dot ? "font-dot" : undefined}
-      fontSize={dot ? DOT : TEXT}
-    >
-      {char}
-    </text>
-  );
-}
-
 const DESKTOP_BOX = bounds(looseLetters(DESKTOP));
 
 // The nav's text size on desktop, which the poem is drawn at: full size
@@ -290,9 +275,13 @@ export default function Spiral({
             ))}
           </textPath>
         </text>
-        {letters.map((letter, i) => (
-          <Glyph key={i} {...letter} />
-        ))}
+        {/* Scatter when the pointer moves through them (see SpiralTail) */}
+        <SpiralTail
+          letters={letters.map((letter) => ({
+            ...letter,
+            fontSize: letter.dot ? DOT : TEXT,
+          }))}
+        />
       </g>
     </svg>
   );
