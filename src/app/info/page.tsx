@@ -93,8 +93,9 @@ export default function Info() {
       {/* The mai branch sits at the bottom left of the window, its left edge
           on the nav's (column 1, moved 20px left with the nav: two columns
           and gutters left of this area, then 20px more). On phones it
-          follows the text, at the bottom of the window. */}
-      <div className="max-md:mt-auto max-md:pt-10 md:absolute md:bottom-0 md:left-[calc(-2*((100%-60px)/4+20px)-20px)] md:-mb-[2.3em] md:-ml-[3.4em] md:text-[calc(var(--nav-text)*4/3)]">
+          follows the text, at the bottom of the window. It overlaps the
+          nav, so it lets clicks through to the links underneath. */}
+      <div className="pointer-events-none max-md:mt-auto max-md:pt-10 md:absolute md:bottom-0 md:left-[calc(-2*((100%-60px)/4+20px)-20px)] md:-mb-[2.3em] md:-ml-[3.4em] md:text-[calc(var(--nav-text)*4/3)]">
         <MaiBranch />
       </div>
     </div>
